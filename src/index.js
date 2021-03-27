@@ -34,17 +34,21 @@ let accessToken = null;
 app.get('/api/auth', (req, res) => {
     const { client_id, redirect_uri } = oauthDetails;
     const monzoAuthUrl = 'https://auth.monzo.com';
+    res.type = ('json');
+    const link = `${monzoAuthUrl}?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code`
+    res.json(link)
 
-    res.type('html');
-    res.send(`
-    <h1>Hello</h1>
-    <form action="${monzoAuthUrl}">
-      <input type="hidden" name="client_id" value="${client_id}" />
-      <input type="hidden" name="redirect_uri" value="${redirect_uri}" />
-      <input type="hidden" name="response_type" value="code" />
-      <button>Authorise app</button>
-    </form>
-  `);
+    //     res.type('html');
+    //     res.send(`
+    //     <body onload="document.form1.submit()">
+    //     <h1>Hello</h1>
+    //         <form name="form1" action="${monzoAuthUrl}">
+    //             <input type="hidden" name="client_id" value="${client_id}" />
+    //             <input type="hidden" name="redirect_uri" value="${redirect_uri}" />
+    //             <input type="hidden" name="response_type" value="code" />
+    //         </form>
+    //     </body>
+    //   `);
 });
 
 app.get('/api/callback', (req, res) => {
