@@ -20,18 +20,6 @@
 		transactions = [...transactions,{"name":{desc}, "cost":{amount}, "carbon":{carbon}}];
 	}
 
-	async function authcheck() {
-		try {
-			const response = await fetch(`/api/authcheck`, {
-			method: "get"
-			})
-			const jResponse = response.json()
-			console.log(jResponse)
-		} catch (error) {
-			console.log(error)
-		}
-	}
-
 	function poll() {
 			fetch(`/api/authcheck`, {
 				method: "get"
@@ -76,13 +64,18 @@
 
 			console.log(transactions)
 	}
-	
+
 	import {Router, Route, Link} from "svelte-routing";
     import Home from "./pages/Home.svelte";
     import Stats from "./pages/Stats.svelte";
 
     export let url="";
 </script>
+
+<Router url="{url}">
+    <Route path="stats" component="{Stats}" />
+    <Route path="/"><Home /></Route>
+</Router>
 
 <div id="mainContainer">
 	<div id="topDiv">
@@ -190,8 +183,3 @@
 		color: cyan;
 	}
 </style>
-
-<Router url="{url}">
-    <Route path="stats" component="{Stats}" />
-    <Route path="/"><Home /></Route>
-</Router>
