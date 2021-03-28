@@ -1,13 +1,22 @@
 <script>
-    export let name = "KFC", cost = 0, carbon = 0;
+    export let name = "KFC";
+	export let cost = 0;
+	export let carbon = 0;
+
+	// I hate JS arrays and types so much
+	// Please let me go back to Haskell
+
+	let fixedName = name['desc'];
+	let fixedCarbon = carbon['carbon'];
+	let fixedCost = cost['amount'];
 </script>
 
 <div class="transactionCard row">
 	<button class="transDisable transText">X</button>
-    <p class="col-md-6 transText transName">{name}</p>
+    <p class="col-md-5 transText transName">{fixedName}</p>
     <div class="colSpacer col-md-1"></div>
-    <p class="col-md-2 transText transCarb">{carbon}kg</p>
-    <p class="col-md-2 transText transOff">£{cost}</p>
+    <p class="col-md-2 transText transCarb">{fixedCarbon}kg</p>
+    <p class="col-md-2 transText transOff">£{fixedCost}</p>
 </div>
 
 <style>
@@ -62,6 +71,10 @@
 
 	.transDisable {
 		color:rgba(255,255,255,0.9);
+		background-color: #f50057;
+	}
+
+	button:focus {
 		background-color: #f50057;
 	}
 </style>

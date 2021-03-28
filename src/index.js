@@ -12,8 +12,6 @@ const base = "https://api.monzo.com/";
 
 // app.use(cors());
 
-app.use(express.static('public'));
-
 app.get("/api/ping", (req, res) => {
     res.status(200);
     res.json("pong");
@@ -51,11 +49,29 @@ app.get('/api/auth', (req, res) => {
     //   `);
 });
 
+app.get('/api/authcheck', (req, res) => {
+    console.log("Access token:", accessToken)
+    try {
+        const { token_type, access_token } = accessToken;
+
+        request.get(base + '/ping/whoami', {
+            headers: {
+                Authorization: `${token_type} ${access_token}`
+            }
+        }, (req, response, body) => {
+            res.send(body)
+        });
+    } catch (error) {
+        console.log(error);
+    }
+
+})
+
 app.get('/api/callback', (req, res) => {
+    console.log("hit callback")
     const { client_id, client_secret, redirect_uri } = oauthDetails;
     const { code } = req.query;
     const monzoAuthUrl = base + 'oauth2/token';
-    console.log(oauthDetails);
 
     request.post({
         url: monzoAuthUrl,
@@ -86,21 +102,8 @@ app.get('/api/accounts', (req, res) => {
             console.log("Not yet authorised");
             res.redirect('/')
         } else {
-            const { accounts } = JSON.parse(body);
-
-            res.type('html');
-            res.write('<h1>Accounts</h1><ul>');
-
-            for (let account of accounts) {
-                const { id, type, description } = account;
-                res.write(`
-                    <li>
-                    Account ID: ${description} Type: ${type} <a href="/api/transactions/${id}">View transaction history</a>
-                    </li>
-                `);
-            }
-
-            res.end('</ul>');
+            const { accounts } = JSON.parse(body)
+            res.send(body);
         }
     });
 });
@@ -116,38 +119,9 @@ app.get('/api/transactions/:acc_id', (req, res) => {
         }
     }, (req, response, body) => {
         const { transactions } = JSON.parse(body);
-
-        res.type('html');
-        res.write(`
-      <h1>Transactions</h1>
-      <table>
-        <thead>
-          <th>Description</th>
-          <th>Amount</th>
-          <th>Category</th>
-        </thead>
-        <tbody>
-    `);
-
-        for (let transaction of transactions) {
-            const {
-                description,
-                amount,
-                category
-            } = transaction;
-
-            res.write(`
-        <tr>
-          <td>${description}</td>
-          <td>&pound;${(amount/100).toFixed(2)}</td>
-          <td>${category}</td>
-        </tr>
-      `);
-        }
-
-        res.write('</tbody></table>');
-        res.end('<br /><a href="/api/accounts">&lt; Back to accounts</a>');
+        res.send(body);
     });
 });
 
+app.use(express.static('public'));
 app.listen(3000);

@@ -1,13 +1,11 @@
 <script>
-	export let name;
 	import TransactionCard from "./components/TransactionCard.svelte";
 	import Info from "./components/Info.svelte"
 
-	$: transactions = [
-		{"name":"Burger King", "cost":3, "carbon":0.4},
-		{"name":"Burger King", "cost":3, "carbon":0.4},
-		{"name":"Long long long name", "cost":3, "carbon":0.4}
-	];
+	let authorised = false;
+	let buttonColour = '#f50057'
+
+	$: transactions = [];
 
 	const redirect_uri = 'http://localhost:5000/api/callback'
 	const client_id = 'oauth2client_0000A5dpELG1M7uTWsSk2D'
@@ -15,20 +13,68 @@
 
 	const link = `${monzoAuthUrl}?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code`
 
-	function addTrans() {
-		transactions = [...transactions,{"name":"KFC", "cost":3, "carbon":0.4}];
+	function addTrans(name, cost, carbon) {
+		const desc = name['description'];
+		const amount = cost['amount'];
+		console.log(desc, amount, carbon)
+		transactions = [...transactions,{"name":{desc}, "cost":{amount}, "carbon":{carbon}}];
 	}
 
-	async function authorise() {
-		// try {
-		// 	const returnValue = await fetch(`/api/auth`);
-		// 	console.log("Return:", returnValue);
-		// 	const { url } = JSON.parse(returnValue)
-		// 	console.log(url)
-		// 	window.open(url, '_blank').focus();
-		// } catch (error) {
-		// 	console.error(error);
-		// }
+	async function authcheck() {
+		try {
+			const response = await fetch(`/api/authcheck`, {
+			method: "get"
+			})
+			const jResponse = response.json()
+			console.log(jResponse)
+		} catch (error) {
+			console.log(error)
+		}
+	}
+
+	function poll() {
+			fetch(`/api/authcheck`, {
+				method: "get"
+			})
+			.then(response => response.json())
+			.then(response => {
+				authorised = response.authenticated;
+				console.log(authorised);
+			})
+        	// .then(response => console.log(response))
+        	.catch(err => console.log(err));
+
+			buttonColour = authorised ? '#119211' : '#f50057'
+			console.log(authorised);
+
+			if (authorised) {
+				fetch(`/api/accounts`, {
+					method: "get"
+				})
+				.then(accs => accs.json())
+				.then(accounts => {
+					console.log(accounts.accounts)
+					for (const account of accounts.accounts) {
+						const { id, type, description } = account;
+						fetch(`/api/transactions/${id}`, {
+							method: "get"
+						})
+						.then(tcs => tcs.json())
+						.then(transactions => {
+							console.log(transactions.transactions)
+							for (var i = 0; i < transactions.transactions.length; i++) {
+								const tsn = transactions.transactions[i];
+								addTrans(tsn, tsn, 5);
+							}
+						})
+					}
+				})
+				.catch(err => console.log(err));
+
+				
+			}
+
+			console.log(transactions)
 	}
 </script>
 
@@ -36,13 +82,14 @@
 	<div id="topDiv">
 		<h1 id="decimName">decim<span class="emphasis">.</span>io</h1>
 		<a class="btn" href={link}>Log In</a>
+		<button on:click={poll}>Poll</button>
 	</div>
 	
 	<hr/>
 	<div class="mainCont" id="leftCont">
 		<div class="transactionList">
 			{#each transactions as transaction}
-				<TransactionCard {...transaction}/>
+				<TransactionCard name={transaction.name} cost={transaction.cost} carbon={transaction.carbon}/>
 			{/each}
 		</div>
 	</div>
@@ -67,14 +114,6 @@
 	.transactionList {
   		-ms-overflow-style: none;
   		scrollbar-width: none;
-	}
-
-	.transTag {
-		font-family: "roc-grotesk-wide", monospace;
-		letter-spacing: 0.1em;
-		padding: 0.5em 1.5em 0 1.5em;
-		color: white;
-		text-align: center;
 	}
 
 	#mainContainer {
@@ -128,8 +167,8 @@
   		padding: 10px 30px;
   		font-size: 20px;
   		color: #fff;
-  		background-color: #f50057;
-  		border: 2px solid #f50057;
+  		background-color: var(--theme-buttonColour);
+  		border: 2px solid var(--theme-buttonColour);
   		cursor: pointer;
   		width: max-content;
   		transition: 0.25s ease;
@@ -137,15 +176,11 @@
 	}
 
 	.btn:hover {
-  		color: #f50057;
+  		color: var(--theme-buttonColour);
   		background-color: transparent;
 	}
 
 	.emphasis {
 		color: cyan;
-	}
-
-	button:focus {
-		background-color: #f50057;
 	}
 </style>
