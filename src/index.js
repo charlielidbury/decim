@@ -3,8 +3,8 @@ require('dotenv').config()
 const express = require('express');
 const request = require('request');
 const { redirect } = require('statuses');
-const transactionsHandler = require('./transactions');
 const app = module.exports = express();
+const transactionsHandler = require('./transactions');
 const port = process.env.PORT || 5000;
 // const cors = require('cors');
 const path = require('path');
@@ -28,53 +28,35 @@ const oauthDetails = {
     redirect_uri: 'http://localhost:5000/api/callback'
 };
 
-let accessToken = null;
-
 // app.locals.accessTokens[userID] = accessToken
 app.locals.accessTokens = {};
 
-app.get('/api/auth', (req, res) => {
-    const { client_id, redirect_uri } = oauthDetails;
-    const monzoAuthUrl = 'https://auth.monzo.com';
-    res.type = ('json');
-    const link = `${monzoAuthUrl}?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code`
-    res.json(link)
+// app.get('/api/authcheck', (req, res) => {
+//     console.log("Access token:", accessToken)
+//     try {
+//         const { token_type, access_token } = accessToken;
 
-    //     res.type('html');
-    //     res.send(`
-    //     <body onload="document.form1.submit()">
-    //     <h1>Hello</h1>
-    //         <form name="form1" action="${monzoAuthUrl}">
-    //             <input type="hidden" name="client_id" value="${client_id}" />
-    //             <input type="hidden" name="redirect_uri" value="${redirect_uri}" />
-    //             <input type="hidden" name="response_type" value="code" />
-    //         </form>
-    //     </body>
-    //   `);
-});
+//         request.get(base + '/ping/whoami', {
+//             headers: {
+//                 Authorization: `${token_type} ${access_token}`
+//             }
+//         }, (req, response, body) => {
+//             res.send(body)
+//         });
+//     } catch (error) {
+//         console.log(error);
+//     }
 
-app.get('/api/authcheck', (req, res) => {
-    console.log("Access token:", accessToken)
-    try {
-        const { token_type, access_token } = accessToken;
+// })
 
-        request.get(base + '/ping/whoami', {
-            headers: {
-                Authorization: `${token_type} ${access_token}`
-            }
-        }, (req, response, body) => {
-            res.send(body)
-        });
-    } catch (error) {
-        console.log(error);
-    }
-
-})
-
-app.get('/api/callback/:sessionId', (req, res) => {
+app.get('/api/callback', (req, res) => {
+    const { accessTokens } = app.locals;
     const { client_id, client_secret, redirect_uri } = oauthDetails;
+    console.log(req.query);
     const { code } = req.query;
     const monzoAuthUrl = base + 'oauth2/token';
+
+    accessTokens[sessionId] = null;
 
     request.post({
         url: monzoAuthUrl,
@@ -88,33 +70,39 @@ app.get('/api/callback/:sessionId', (req, res) => {
     }, (err, response, body) => {
         // stores accessToken on server for future use
         const accessToken = JSON.parse(body);
-        app.locals.accessTokens[req.params.sessionId] = accessToken;
+        console.log(accessToken);
+        accessTokens[sessionId] = {
+            accessToken,
+            accId
+        };
         // redirects to home page
         res.redirect('/');
     });
 });
 
-app.get('/api/accounts', (req, res) => {
-    const { token_type, access_token } = accessToken;
+// all the stuff to do with transactions
+app.use("/api/transactions", transactionsHandler);
 
-    request.get(base + 'accounts', {
-        headers: {
-            Authorization: `${token_type} ${access_token}`
-        }
-    }, (req, response, body) => {
-        const { code } = JSON.parse(body);
 
-        if (code == 'forbidden.insufficient_permissions') {
-            console.log("Not yet authorised");
-            res.redirect('/')
-        } else {
-            const { accounts } = JSON.parse(body)
-            res.send(body);
-        }
-    });
-});
+// app.get('/api/accounts', (req, res) => {
+//     const { token_type, access_token } = accessToken;
 
-app.use("/transactions", transactionsHandler);
+//     request.get(base + 'accounts', {
+//         headers: {
+//             Authorization: `${token_type} ${access_token}`
+//         }
+//     }, (req, response, body) => {
+//         const { code } = JSON.parse(body);
+
+//         if (code == 'forbidden.insufficient_permissions') {
+//             console.log("Not yet authorised");
+//             res.redirect('/')
+//         } else {
+//             const { accounts } = JSON.parse(body)
+//             res.send(body);
+//         }
+//     });
+// });
 
 // app.get('/api/transactions/:acc_id', (req, res) => {
 //     const { acc_id } = req.params;

@@ -3,10 +3,27 @@
 
     export let sessionId;
 
-    const transactions = new Promise((resolve, reject) => {
+    const transactionsPromise = new Promise((resolve, reject) => {
         // checks every 1s
-        setInterval(() => {
-            fetch()
+        const interval = setInterval(async () => {
+            const res = await fetch(`/api/transactions/${sessionId}`);
+
+            // CHECK: status != 401
+            if (res.status == 401) return;
+
+            // CHECK: status != 500
+            if (res.status == 500) {
+                clearInterval(interval);
+                localStorage.removeItem("sessionId");
+                reject();
+                return;
+            }
+
+            const transactions = await res.json();
+            
+            console.log(transactions);
+
+            resolve(transactions);
         }, 1000);
     });
 

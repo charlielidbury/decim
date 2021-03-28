@@ -4,6 +4,7 @@
 	import {Router, Route, Link} from "svelte-routing";
 	import Home from "./pages/Home.svelte";
 	import Stats from "./pages/Stats.svelte";
+	import Login from "./components/Login.svelte";
 
 	let authorised = false;
 	let buttonColour = '#f50057'
@@ -24,48 +25,48 @@
 	}
 
 	function poll() {
-			fetch(`/api/authcheck`, {
+		fetch(`/api/authcheck`, {
+			method: "get"
+		})
+		.then(response => response.json())
+		.then(response => {
+			authorised = response.authenticated;
+			console.log(authorised);
+		})
+		// .then(response => console.log(response))
+		.catch(err => console.log(err));
+
+		buttonColour = authorised ? '#119211' : '#f50057'
+		console.log(authorised);
+
+		if (authorised) {
+			fetch(`/api/accounts`, {
 				method: "get"
 			})
-			.then(response => response.json())
-			.then(response => {
-				authorised = response.authenticated;
-				console.log(authorised);
+			.then(accs => accs.json())
+			.then(accounts => {
+				console.log(accounts.accounts)
+				for (const account of accounts.accounts) {
+					const { id, type, description } = account;
+					fetch(`/api/transactions/${id}`, {
+						method: "get"
+					})
+					.then(tcs => tcs.json())
+					.then(transactions => {
+						console.log(transactions.transactions)
+						for (var i = 0; i < transactions.transactions.length; i++) {
+							const tsn = transactions.transactions[i];
+							addTrans(tsn, tsn, 5);
+						}
+					})
+				}
 			})
-        	// .then(response => console.log(response))
-        	.catch(err => console.log(err));
+			.catch(err => console.log(err));
 
-			buttonColour = authorised ? '#119211' : '#f50057'
-			console.log(authorised);
+			
+		}
 
-			if (authorised) {
-				fetch(`/api/accounts`, {
-					method: "get"
-				})
-				.then(accs => accs.json())
-				.then(accounts => {
-					console.log(accounts.accounts)
-					for (const account of accounts.accounts) {
-						const { id, type, description } = account;
-						fetch(`/api/transactions/${id}`, {
-							method: "get"
-						})
-						.then(tcs => tcs.json())
-						.then(transactions => {
-							console.log(transactions.transactions)
-							for (var i = 0; i < transactions.transactions.length; i++) {
-								const tsn = transactions.transactions[i];
-								addTrans(tsn, tsn, 5);
-							}
-						})
-					}
-				})
-				.catch(err => console.log(err));
-
-				
-			}
-
-			console.log(transactions)
+		console.log(transactions)
 	}
 
     export let url="";
@@ -79,8 +80,9 @@
 <div id="mainContainer">
 	<div id="topDiv">
 		<h1 id="decimName">decim<span class="emphasis">.</span>io</h1>
-		<a class="btn" href={link}>Log In</a>
-		<button on:click={poll}>Poll</button>
+		<Login/>
+		<!-- <a class="btn" href={link}>Log In</a>
+		<button on:click={poll}>Poll</button> -->
 	</div>
 	
 	<hr/>

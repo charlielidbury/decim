@@ -1,6 +1,9 @@
 <script>
     import {Router,Link} from "svelte-routing";
     import { links } from "svelte-routing";
+
+	import Login from "./Login.svelte";
+
     export let url="";
 </script>
 
@@ -12,6 +15,7 @@
         <h2 class="sidebarLink"><a class="sidebarInner" href="/">me</a></h2>
     </Router>
     <div class="spacer" style="height:38vh"></div>
+	<Login/>
     <h2 class="sidebarLinkVariant"><a class="sidebarInner sidebarInnerVariant" href="/">offset me!</a></h2>
     <div class="headlineStat">
         <p>this month's carbon</p>

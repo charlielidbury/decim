@@ -30,21 +30,16 @@
 </script>
 
 <div id="mainContainer">
-
-	{#if sessionId}
-		<Sidebar/>
-		<div id="contentContainer">
-			<div class="mainCont" id="leftCont">
-				<Transactions sessionId={sessionId}/>
-			</div>
-			
-			<div class="mainCont" id="rightCont">
-				<Info/>
-			</div>
+	<Sidebar/>
+	<div id="contentContainer">
+		<div class="mainCont" id="leftCont">
+			<Transactions sessionId={sessionId}/>
 		</div>
-	{:else}
-		<Login callback={sid => sessionId = sid}/>
-	{/if}
+		
+		<div class="mainCont" id="rightCont">
+			<Info/>
+		</div>
+	</div>
 </div>
 
 <style>

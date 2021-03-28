@@ -1,14 +1,37 @@
 const express = require("express");
 const sqlite = require("better-sqlite3");
-const { locals } = require(".");
 
 const db = sqlite("store/db.sqlite");
 
 const router = express.Router();
 
-router.get("/:sessionId", (req, res) => {
-    const userID = req.params.userID;
-    const accessToken = req.params.accessToken;
+router.get("/:sessionId", async (req, res) => {
+    const { sessionId } = req.params;
+    const { accessTokens } = req.app.locals;
+
+    // if no access token yet: error 401
+    if (accessTokens[sessionId] === null) {
+        res.status(401);
+        res.end();
+        return;
+    } else if (accessTokens[sessionId] === undefined) {
+        res.status(500);
+        res.end();
+        return;
+    }
+
+    const { accessToken, accId, tokenType } = app.locals.accessTokens[sessionId];    
+
+    const transactionsUrl = base + `transactions?expand[]=merchant&account_id=${accId}`;
+
+    request.get(transactionsUrl, {
+        headers: {
+            Authorization: `${token_type} ${accessToken}`
+        }
+    }, (req, response, body) => {
+        const { transactions } = JSON.parse(body);
+        res.send(body);
+    });
 
     // figures out when the last proccessed transaction was
     const { lastTx } = db.prepare(`
