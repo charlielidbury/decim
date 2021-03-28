@@ -1,6 +1,9 @@
 <script>
 	import TransactionCard from "./components/TransactionCard.svelte";
 	import Info from "./components/Info.svelte"
+	import {Router, Route, Link} from "svelte-routing";
+	import Home from "./pages/Home.svelte";
+	import Stats from "./pages/Stats.svelte";
 
 	let authorised = false;
 	let buttonColour = '#f50057'
@@ -64,10 +67,6 @@
 
 			console.log(transactions)
 	}
-
-	import {Router, Route, Link} from "svelte-routing";
-    import Home from "./pages/Home.svelte";
-    import Stats from "./pages/Stats.svelte";
 
     export let url="";
 </script>

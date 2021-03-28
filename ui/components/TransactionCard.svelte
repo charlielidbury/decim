@@ -6,9 +6,9 @@
 	// I hate JS arrays and types so much
 	// Please let me go back to Haskell
 
-	let fixedName = name['desc'];
-	let fixedCarbon = carbon['carbon'];
-	let fixedCost = cost['amount'];
+	let fixedName = name // ['desc'];
+	let fixedCarbon = carbon // ['carbon'];
+	let fixedCost = cost // ['amount'];
 </script>
 
 <div class="transactionCard row">

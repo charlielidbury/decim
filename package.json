@@ -17,9 +17,11 @@
     "svelte": "^3.0.0"
   },
   "dependencies": {
+    "better-sqlite3": "^7.1.2",
     "bootstrap": "^4.6.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "request": "^2.88.2",
     "sirv-cli": "^1.0.0",
     "svelte-routing": "^1.5.0",
     "sveltestrap": "^3.13.0"

@@ -1,8 +1,9 @@
 <script>
 	export let name;
-	import TransactionCard from "../components/TransactionCard.svelte";
+	import Transactions from "../components/Transactions.svelte";
 	import Info from "../components/Info.svelte"
 	import Sidebar from "../components/Sidebar.svelte"
+	import Login from "../components/Login.svelte"
 
 	$: transactions = [
 		{"name":"Burger King", "cost":3, "carbon":0.4},
@@ -24,46 +25,26 @@
 		{"name":"Long long long name", "cost":3, "carbon":0.4}
 	];
 
-	const redirect_uri = 'http://localhost:5000/api/callback'
-	const client_id = 'oauth2client_0000A5dpELG1M7uTWsSk2D'
-	const monzoAuthUrl = 'https://auth.monzo.com';
+	const sessionId = localStorage.getItem("sessionId");
 
-	const link = `${monzoAuthUrl}?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code`
-
-	function addTrans() {
-		transactions = [...transactions,{"name":"KFC", "cost":3, "carbon":0.4}];
-	}
-
-	async function authorise() {
-		// try {
-		// 	const returnValue = await fetch(`/api/auth`);
-		// 	console.log("Return:", returnValue);
-		// 	const { url } = JSON.parse(returnValue)
-		// 	console.log(url)
-		// 	window.open(url, '_blank').focus();
-		// } catch (error) {
-		// 	console.error(error);
-		// }
-	}
 </script>
 
 <div id="mainContainer">
 
-	<Sidebar/>
-	<div id="contentContainer">
-		<div class="mainCont" id="leftCont">
-			<div class="transactionList">
-				<h1 style="color:white;font-family:roc-grotesk-wide;letter-spacing:0.1em;font-size:2em;font-weight:300;padding:1em 0 0 0">Payment history</h1>
-				{#each transactions as transaction}
-					<TransactionCard {...transaction}/>
-				{/each}
+	{#if sessionId}
+		<Sidebar/>
+		<div id="contentContainer">
+			<div class="mainCont" id="leftCont">
+				<Transactions sessionId={sessionId}/>
+			</div>
+			
+			<div class="mainCont" id="rightCont">
+				<Info/>
 			</div>
 		</div>
-
-		<div class="mainCont" id="rightCont">
-			<Info/>
-		</div>
-	</div>
+	{:else}
+		<Login callback={sid => sessionId = sid}/>
+	{/if}
 </div>
 
 <style>
