@@ -76,6 +76,12 @@
 
 			console.log(transactions)
 	}
+	
+	import {Router, Route, Link} from "svelte-routing";
+    import Home from "./pages/Home.svelte";
+    import Stats from "./pages/Stats.svelte";
+
+    export let url="";
 </script>
 
 <div id="mainContainer">
@@ -184,3 +190,8 @@
 		color: cyan;
 	}
 </style>
+
+<Router url="{url}">
+    <Route path="stats" component="{Stats}" />
+    <Route path="/"><Home /></Route>
+</Router>

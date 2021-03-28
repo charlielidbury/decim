@@ -9,8 +9,7 @@
 <style>
     .info_box {
         width: 100%;
-        border: solid 1px white;
         color: white;
-        height: 83vh;
+        font-family: 'roc-grotesk-wide';
     }
 </style>

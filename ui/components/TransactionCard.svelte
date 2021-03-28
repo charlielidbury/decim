@@ -22,15 +22,16 @@
 <style>
     .transactionCard {
 		background-image: linear-gradient(100deg, rgb(35,35,70), rgb(38,27,56));
-		width: 100%;
+		width: 90%;
 		
-		margin: 1em auto 2em;
+		margin: 1em auto 2em auto;
 
 		border: 1px solid white;
 		cursor:pointer;
 		transition: ease transform 0.3s,
 			ease box-shadow 0.3s,
-			ease border-radius 0.3s;
+			ease border-radius 0.3s,
+			ease opacity 0.3s;
 		border-radius: 2px;
 
 		overflow: hidden;
@@ -42,6 +43,10 @@
 		-moz-box-shadow: 11px 10px 31px -4px rgba(0,0,0,0.49);
 		box-shadow: 11px 10px 31px -4px rgba(0,0,0,0.49);
 		border-radius: 7px;
+	}
+
+	.transactionCard:active {
+		opacity: 0.7;
 	}
 
     .transText {
