@@ -2,8 +2,23 @@
 	export let name;
 	import TransactionCard from "../components/TransactionCard.svelte";
 	import Info from "../components/Info.svelte"
+	import Sidebar from "../components/Sidebar.svelte"
 
 	$: transactions = [
+		{"name":"Burger King", "cost":3, "carbon":0.4},
+		{"name":"Burger King", "cost":3, "carbon":0.4},
+		{"name":"Burger King", "cost":3, "carbon":0.4},
+		{"name":"Burger King", "cost":3, "carbon":0.4},
+		{"name":"Burger King", "cost":3, "carbon":0.4},
+		{"name":"Burger King", "cost":3, "carbon":0.4},
+		{"name":"Burger King", "cost":3, "carbon":0.4},
+		{"name":"Burger King", "cost":3, "carbon":0.4},
+		{"name":"Burger King", "cost":3, "carbon":0.4},
+		{"name":"Burger King", "cost":3, "carbon":0.4},
+		{"name":"Burger King", "cost":3, "carbon":0.4},
+		{"name":"Burger King", "cost":3, "carbon":0.4},
+		{"name":"Burger King", "cost":3, "carbon":0.4},
+		{"name":"Burger King", "cost":3, "carbon":0.4},
 		{"name":"Burger King", "cost":3, "carbon":0.4},
 		{"name":"Burger King", "cost":3, "carbon":0.4},
 		{"name":"Long long long name", "cost":3, "carbon":0.4}
@@ -33,119 +48,65 @@
 </script>
 
 <div id="mainContainer">
-	<div id="topDiv">
-		<h1 id="decimName">decim<span class="emphasis">.</span>io</h1>
-		<a class="btn" href={link}>Log In</a>
-	</div>
-	
-	<hr/>
-	<div class="mainCont" id="leftCont">
-		<div class="transactionList">
-			{#each transactions as transaction}
-				<TransactionCard {...transaction}/>
-			{/each}
-		</div>
-	</div>
 
-	<div class="mainCont" id="rightCont">
-		<Info/>
+	<Sidebar/>
+	<div id="contentContainer">
+		<div class="mainCont" id="leftCont">
+			<div class="transactionList">
+				<h1 style="color:white;font-family:roc-grotesk-wide;letter-spacing:0.1em;font-size:2em;font-weight:300;padding:1em 0 0 0">Payment history</h1>
+				{#each transactions as transaction}
+					<TransactionCard {...transaction}/>
+				{/each}
+			</div>
+		</div>
+
+		<div class="mainCont" id="rightCont">
+			<Info/>
+		</div>
 	</div>
 </div>
 
 <style>
 	@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300&family=Inconsolata:wght@300&display=swap');
-
-	.transactionList {
-		max-height: 84vh;
-		overflow-y: auto;
-	}
-
-	.transactionList::-webkit-scrollbar {
-  		display: none;
-	}
-
-	.transactionList {
-  		-ms-overflow-style: none;
-  		scrollbar-width: none;
-	}
-
-	.transTag {
-		font-family: "roc-grotesk-wide", monospace;
-		letter-spacing: 0.1em;
-		padding: 0.5em 1.5em 0 1.5em;
-		color: white;
-		text-align: center;
-	}
+	
 
 	#mainContainer {
 		background-image: linear-gradient(10deg, rgb(35,35,70), rgb(38,27,56));
-		margin-bottom: 0;
+		margin: none;
 		min-height: 100vh;
 		width: 100%;
-		overflow: hidden;
+		overflow-x: hidden;
+	}
+
+	#contentContainer {
+		width: 80%;
+		float: right;
+		margin: auto;
+		min-height: 100%;
+		display:fixed;
+		overflow:hidden;
 	}
 
 	.mainCont {
-		width: 45%;
+		width: 48%;
+		min-height: 100vh;
+		display:fixed;
+		max-height: 100vh;
+		overflow-y: auto;
+		scrollbar-width: none;
 	}
 
+	.mainCont::-webkit-scrollbar {
+		display: none;
+		}
 	#leftCont {
 		float: left;
-		margin: 1em 0 1% 3%
+		margin: 0 0 0 3%
 	}
 
 	#rightCont {
 		float: right;
-		margin: 1.4em 3% 1% 0%
-	}
-
-	hr {
-		border-top: solid 1px white;
-		margin: auto;
-		width: 90%
-	}
-
-	h1 {
-		margin: 0;
-		padding: 0;
-	}
-
-	#decimName {
-		color: white;
-		font-family: 'roc-grotesk-wide', monospace;
-		letter-spacing: 0.1em;
-		font-size: min(2.5em, 2.5vw);
-		text-align: left;
-		font-weight: 300;
-		font-variant: normal;
-		padding: 0.6em 0 0.6em 5%;
-		width: 40%;
-		display: inline-block;
-	}
-
-	.btn {
-		float: right;
-  		padding: 10px 30px;
-  		font-size: 20px;
-  		color: #fff;
-  		background-color: #f50057;
-  		border: 2px solid #f50057;
-  		cursor: pointer;
-  		width: max-content;
-  		transition: 0.25s ease;
-		margin: 0.6em 8%;
-	}
-
-	.btn:hover {
-  		color: #f50057;
-  		background-color: transparent;
-	}
-
-	.emphasis {
-		color: cyan;
-	}
-
-	button:focus {
-		background-color: #f50057;
+		border-left: 1px solid white;
+		display: fixed;
 	}
 </style>
