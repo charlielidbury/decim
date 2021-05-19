@@ -15,8 +15,8 @@
 	<button class="transDisable transText">X</button>
     <p class="col-md-5 transText transName">{fixedName}</p>
     <div class="colSpacer col-md-1"></div>
-    <p class="col-md-2 transText transCarb">{fixedCarbon}kg</p>
-    <p class="col-md-2 transText transOff">£{fixedCost}</p>
+    <p class="col-md-2 transText transCarb">{fixedCarbon}g</p>
+    <p class="col-md-2 transText transOff">{fixedCost}p</p>
 </div>
 
 <style>
